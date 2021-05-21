@@ -1,0 +1,66 @@
+<!--
+
+    Propietario / Grupo de usuarios
+    chown [owner/group owner] [nombre del archivo]
+    ej -> chown andres:staff index.html
+
+    Permisos
+        r (read) -4
+        w (write) -2 
+        x (execute) -1
+    
+        chmod [permisos-"ver-tabla"] [nombre del archivo]
+        ej -> chmod 777 index.html
+
+    Terminos para proporcionar permisos, adicional se van acumulando por ejemplo escritura y lectura se pasaría con 6
+
+    r (read) -4
+    w (write) -2 
+    x (execute) -1
+
+    Con los siguientes comandos se puede designar el propietario y grupo de usarios.
+
+    sudo chown root:staff index.html
+
+    Donde root es el superusuario
+    Staff es el grupo
+    Index.html es el nombre del archivo.
+
+    Con los siguientes comandos se puede asignar los permisos
+
+    chmod 666 index.html
+
+    Donde chmod es la ejecución del comando
+    666 es el permiso que se le esta dando a cada usuario sin espacios
+    index.html el archivo al que se estan asignando los permisos
+
+    Conectarse desde ssh
+
+    ssh -i [ruta]
+    ej -> ssh -i ssh -i ./ec2-bedu-bkfun.pem ubuntu@ec2-54-202-251-229.us-west-2.compute.amazonaws.com
+
+    Para mover el archivo a ruta publica 
+    sudo mv [nombre del archivo] /var/www/html
+    ej -> sudo mv index-luis.html /var/www/html
+
+    ==> Para ciertas acciones para mover a la red pública solo se puede hacer con sudo
+
+    Para enviar un archivo local al servidor debemos seguir el siguiente comando
+
+    scp -i ./[llave] ./[nombre del archivo] [host] :[ruta]
+    ej-> scp -i ./ec2-bedu-bkfun.pem ./index-luis-2.html ubuntu@ec2-54-202-251-229.us-west-2.compute.amazonaws.com:/home/ubuntu
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luis Dominguez Aldana 2</title>
+</head>
+<body>
+	 <h1>¡Hola! soy Luis Dominguez Aldana 2</h1>
+	<p>Bienvenido a la soberana república soviética de mi website</p>
+</body>
+</html>
