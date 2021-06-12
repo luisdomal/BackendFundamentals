@@ -71,10 +71,6 @@ function modificarUsuario(req, res, next) {
     let nuevaInfo = req.body
     if (typeof nuevaInfo.username !== 'undefined')
       user.username = nuevaInfo.username
-    if (typeof nuevaInfo.nombre !== 'undefined')
-    user.nombre = nuevaInfo.nombre
-    if (typeof nuevaInfo.apellido !== 'undefined')
-    user.apellido = nuevaInfo.nombre
     if (typeof nuevaInfo.bio !== 'undefined')
       user.bio = nuevaInfo.bio
     if (typeof nuevaInfo.foto !== 'undefined')

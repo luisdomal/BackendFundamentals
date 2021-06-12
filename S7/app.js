@@ -37,18 +37,25 @@ mongoose.connect(
 
 mongoose.set("debug", true)
 
+// Aquí se importarán los modelos Mascota y Solicitud cuando estén listos
+/*********************** Mongoose Configuration *******************************/
 require("./models/Usuario");
+require('./config/passport');
 require('./models/Mascota');
-require("./config/passport");
+require('./models/Solicitud');
 
-app.use('/v1', require("./routes"));
+// Agregamos el código de nuestro router (routes/index.js)
+app.use('/v1', require('./routes'));
 
+// Manejando los errores 404
 app.use(function(req, res, next) {
-  var err = new Error('Not found');
+  var err = new Error('Not Found');
   err.status = 404;
   next(err);
-})
+});
 
-var server = app.listen(3000, function() {
-  console.log('Escuchando en el puerto localhost:' + 3000);
-})
+
+// Iniciando el servidor...
+var server = app.listen(process.env.PORT || 3000, function(){
+  console.log('Escuchando en el puerto ' + server.address().port);
+});
