@@ -5,35 +5,119 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prueba</title>
-  <script>
-    fetch('http://localhost:3000/v1/usuarios/')
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('usuarios').innerHTML = data.map(usuario => `
-          <p>${usuario.username}: ${usuario.email}</p>
-        `)
-      });
-    function dopost(event) {
-      event.preventDefault()
-      fetch('http://localhost:3000/v1/usuarios/', {
-        method: 'POST'
-      }).then(response => response.json())
-        .then(data => {
-          console.log(data)
-        });
-    }
-  </script>
 </head>
 <body>
-  <h1>Hola crayola</h1>
-  <div id="usuarios"></div>
-  <form action="http://localhost:3000/v1/usuarios/" method="POST">
-    <input name="username" type="text" placeholder="Nombre de usuario"/><br/>
-    <input name="nombre" type="text" placeholder="Nombre"/><br/>
-    <input name="email" type="email" required placeholder="correo"/><br/>
-    <input name="apellido" type="text" placeholder="Apellido"/><br/>
-    <input name="password" type="password" placeholder="Contraseña"/><br/>
-    <button type="submit" onsubmit="dopost()">Enviar</button>
+  <h1>Usuarios</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="users"></tbody>
+  </table>
+  <h2>Nuevo usuario</h2>
+  <form id="registro" onsubmit="createUser(event)"> 
+    <input id="username" name="username" type="text" placeholder="Nombre de usuario"/><br/>
+    <input id="email" name="email" type="email" required placeholder="correo"/><br/>
+    <input id="nombre" name="nombre" type="text" placeholder="Nombre"/><br/>
+    <input id="apellido" name="apellido" type="text" placeholder="Apellido"/><br/>
+    <input id="password" name="password" type="password" placeholder="Contraseña"/><br/>
+    <button type="submit">Enviar</button>
   </form>
+  <script>
+    // lista de usuarios
+    let users = []
+
+    // funcion que obtiene a los usuarios
+    function getUsers() {
+      fetch('http://localhost:3000/v1/usuarios/')
+        .then(response => response.json())
+        .then(data => {
+          users = data
+          printUsers()
+        });  
+    }
+    getUsers()
+
+    // funcion que imprime usuarios
+    function printUsers() {
+      console.log(users)
+      document.getElementById('users').innerHTML = users.map(user => `
+          <tr>
+            <td>${user.username}</td>
+            <td>${user.nombre} ${user.apellido}</td>
+            <td>${user.email}</td>
+            <td>
+              <button onclick="deleteUser('${user.id}')">
+                Eliminar  
+              </button>
+            </td>
+          </tr>`).join('')
+    }
+
+    // funcion con los headers para peticiones que requirean autenticacion
+    function getAuthHeaders() {
+      // AQUI VA TU TOKEN
+      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwYzJjM2MxZWQ5ODlkMDAxNTM1OWRjMSIsInVzZXJuYW1lIjoiZGFueSIsImV4cCI6MTYyOTA2MjkwNywiaWF0IjoxNjIzODc4OTA3fQ.9T_Duq_50hdU6_nDqEbNtlQThdWT8uUZ00aHfsNTPZs'
+      return {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
+    }
+    
+    // funcion que manda el formulario de usuario a la api
+    function createUser(e) {
+      e.preventDefault()
+      const payload = {
+        username: document.getElementById('username').value,
+        email: document.getElementById('email').value,
+        nombre: document.getElementById('nombre').value,
+        apellido: document.getElementById('apellido').value,
+        password: document.getElementById('password').value
+      }
+
+      console.log(payload)
+      console.log(JSON.stringify(payload))
+
+      fetch('http://localhost:3000/v1/usuarios/', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: getAuthHeaders()
+      }).then(response => {
+        if (!response.ok) {
+          alert('Ocurrio un error')
+          throw response
+        }
+        return response.json()
+      }).then(data => {
+        alert('Usuario creado!')
+        users.push(data)
+        printUsers()
+      }).catch(error => console.log(error));
+    }
+
+    // funcion que elimina usuario
+    function deleteUser(id) {
+      if (!confirm('Eliminar usuario?')) return;
+
+      fetch('http://localhost:3000/v1/usuarios/'+id, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      }).then(response => {
+        if (!response.ok) {
+          alert('Ocurrio un error');
+          console.log(response)
+        } else {
+          alert('Usuario Eliminado!')
+          users = users.filter(user => user.id !== id)
+          printUsers()
+        }
+      });
+    }
+  </script>
 </body>
 </html>
